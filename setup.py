@@ -34,7 +34,7 @@ setup(
 
     # $ pip install -e .[dev]
     extras_require={
-        'dev': ['pylint', 'pep8', 'flake8', 'ipython'],
+        'dev': ['pylint', 'mypy-lang', 'pydocstyle', 'ipython'],
     },
 
 )
