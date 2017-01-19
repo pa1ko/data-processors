@@ -1,6 +1,6 @@
 # -- coding: utf-8 -*-
-""" Extract information from Polish ID Number: PESEL. """
-import logging
+"""Extract information from Polish ID Number: PESEL."""
+
 import datetime
 from pandas import cut
 from dateutil.relativedelta import relativedelta
@@ -11,8 +11,8 @@ PESEL_REGEX = r'^(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)$'
 # Birth date correction agianst century
 
 
-def format(items):
-    """Unifi format."""
+def unify(items):
+    """Unifi format of pesel number."""
     return items.str.strip()
 
 
@@ -20,7 +20,7 @@ def is_valid(items):
     """"Bool mask with True as valid pesel."""
     digit_df = (items.str.strip()
                 .str.extract(PESEL_REGEX, expand=True)
-                .applymap(float)
+                .applymap(float)  # float because of posible NaN's
                )
 
     controlsum = (9 * digit_df.iloc[:, 0].values +
@@ -39,8 +39,11 @@ def is_valid(items):
 
 
 def gender(items):
-    """Extract gender from pesel."""
-    # Mapping 10th number of pesel to gender even women odd men
+    """Extract gender from pesel.
+
+    Decode 10th number of pesel to return gender:
+    on even women odd on men TODO
+    """
     gender_digit = dict(
         zip([str(x) for x in range(10)],
             ['K' if x % 2 == 0 else 'M' for x in range(10)])

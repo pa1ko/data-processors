@@ -27,6 +27,16 @@ class PeselTestCase(unittest.TestCase):
         pdtest.assert_series_equal(tested, self.pesel_df['valid'],
                                    check_names=False)
 
+    def test_unify(self):
+        tdf = pd.DataFrame([(' 123  ', '123'),
+                            ('123', '123'),
+                            ('    123', '123')],
+                           columns=['dirty', 'clean'])
+
+        tested = pesel.unify(tdf['dirty'])
+        pdtest.assert_series_equal(tested, tdf['clean'],
+                                   check_names=False)
+
     def test_pesel_gender(self):
         tested = pesel.gender(self.pesel_df['pesel'])
         pdtest.assert_series_equal(tested, self.pesel_df['gender'],
