@@ -34,7 +34,7 @@ setup(
 
     # $ pip install -e .[dev]
     extras_require={
-        'dev': ['pylint', 'mypy-lang', 'pydocstyle', 'ipython'],
+        'dev': ['pytest', 'pylint', 'mypy-lang', 'pydocstyle', 'ipython'],
     },
 
 )

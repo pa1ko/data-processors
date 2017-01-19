@@ -11,19 +11,6 @@ from dateutil.relativedelta import relativedelta
 # ===
 # Regex pattern of correct pesel number
 PESEL_REGEX = r'^(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)$'
-# Mapping 10th number of pesel to gender
-GENDER_DIGIT = {
-    '0': 'K',
-    '2': 'K',
-    '4': 'K',
-    '6': 'K',
-    '8': 'K',
-    '1': 'M',
-    '3': 'M',
-    '5': 'M',
-    '7': 'M',
-    '9': 'M',
-}
 # Birth date correction agianst century
 CENTURY_FACTORS = {
     18: -80,
@@ -34,14 +21,14 @@ CENTURY_FACTORS = {
 }
 
 
-def format(s):
+def format(items):
     """Unifi format."""
-    return s.str.strip()
+    return items.str.strip()
 
 
-def is_valid(s):
+def is_valid(items):
     """"Bool mask with True as valid pesel."""
-    digit_df = (s.str.extract(PESEL_REGEX, expand=True)
+    digit_df = (items.str.extract(PESEL_REGEX, expand=True)
                 .applymap(float)
                )
 
@@ -60,22 +47,28 @@ def is_valid(s):
     return digit_df.iloc[:, 10] == controlsum
 
 
-def gender(s):
+def gender(items):
     """Extract gender from pesel."""
-    if s.dtype != 'O':
+    # Mapping 10th number of pesel to gender even women odd men
+    gender_digit = dict(
+        zip([str(x) for x in range(10)],
+            ['K' if x % 2 == 0 else 'M' for x in range(10)])
+        )
+
+    if items.dtype != 'O':
         s = s.apply(str)
 
-    valid_mask = is_valid(s)
+    valid_mask = is_valid(items)
 
-    return s[valid_mask].str.slice(start=9, stop=10).map(GENDER_DIGIT)
+    return s[valid_mask].str.slice(start=9, stop=10).map(gender_digit)
 
 
-def birth_date(s):
+def birth_date(items):
     """Extract birth date from pesel."""
-    if s.dtype != 'O':
+    if items.dtype != 'O':
         s = s.apply(str)
 
-    new_s = s[is_valid(s)]
+    new_s = s[is_valid(items)]
     new_s = (new_s.str.extract(pat=r'^(\d\d)(\d\d)(\d\d)', expand=True))
     new_s.columns = ['year', 'month', 'day']
 
