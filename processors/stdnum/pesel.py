@@ -1,24 +1,14 @@
 # -- coding: utf-8 -*-
-"""
-Extract information from Polish ID Number: PESEL.
-"""
+""" Extract information from Polish ID Number: PESEL. """
 import logging
 import datetime
 from pandas import cut
 from dateutil.relativedelta import relativedelta
 
-
 # ===
 # Regex pattern of correct pesel number
 PESEL_REGEX = r'^(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)$'
 # Birth date correction agianst century
-CENTURY_FACTORS = {
-    18: -80,
-    19: 0,
-    20: -20,
-    21: -40,
-    22: -60
-}
 
 
 def format(items):
@@ -28,7 +18,8 @@ def format(items):
 
 def is_valid(items):
     """"Bool mask with True as valid pesel."""
-    digit_df = (items.str.extract(PESEL_REGEX, expand=True)
+    digit_df = (items.str.strip()
+                .str.extract(PESEL_REGEX, expand=True)
                 .applymap(float)
                )
 
@@ -65,6 +56,15 @@ def gender(items):
 
 def birth_date(items):
     """Extract birth date from pesel."""
+
+    century_factors = {
+        18: -80,
+        19: 0,
+        20: -20,
+        21: -40,
+        22: -60
+    }
+
     if items.dtype != 'O':
         s = s.apply(str)
 

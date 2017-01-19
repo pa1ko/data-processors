@@ -15,6 +15,7 @@ class PeselTestCase(unittest.TestCase):
              ('70102108696', 'M', datetime(1970, 10, 21), True),
              ('01320107989', 'K', datetime(2001, 12, 1), True),
              ('99851201182', 'K', datetime(1899, 5, 12), True),
+             ('3301051236', '-', pd.NaT, False),
              ('70102108691', '-', pd.NaT, False),
              ('10102108696', '-', pd.NaT, False),
              ('123', '-', pd.NaT, False)],
