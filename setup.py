@@ -30,11 +30,12 @@ setup(
 
     keywords='data analysis',
     packages=find_packages(exclude=['tests']),
-    install_requires=['numpy', 'pandas'],
+    install_requires=['numpy>=1.7', 'pandas>=0.19'],
 
-    # $ pip install -e .[dev]
+    # $ pip install -e .[dev,doc]
     extras_require={
         'dev': ['pytest', 'pylint', 'mypy-lang', 'pydocstyle', 'ipython'],
+        'doc': ['sphinx', 'sphinx-autobuild']
     },
 
 )
