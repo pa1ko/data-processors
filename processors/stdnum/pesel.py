@@ -2,7 +2,8 @@
 """Extract information from Polish ID Number: PESEL."""
 
 import datetime
-from pandas import cut
+from pandas import cut, to_datetime
+from numpy import nan as NaN
 from dateutil.relativedelta import relativedelta
 
 # ===
@@ -13,13 +14,14 @@ PESEL_REGEX = r'^(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)$'
 
 def unify(items):
     """Unifi format of pesel number."""
+    if items.dtype != 'O':
+        items = items.apply(str)
     return items.str.strip()
 
 
 def is_valid(items):
-    """"Bool mask with True as valid pesel."""
-    digit_df = (items.str.strip()
-                .str.extract(PESEL_REGEX, expand=True)
+    """"Bool mask with True if pesel id is valid."""
+    digit_df = (items.str.extract(PESEL_REGEX, expand=True)
                 .applymap(float)  # float because of posible NaN's
                )
 
@@ -42,19 +44,17 @@ def gender(items):
     """Extract gender from pesel.
 
     Decode 10th number of pesel to return gender:
-    on even women odd on men TODO
+    on even women odd on men TODO: description
     """
     gender_digit = dict(
         zip([str(x) for x in range(10)],
             ['K' if x % 2 == 0 else 'M' for x in range(10)])
         )
 
-    if items.dtype != 'O':
-        s = s.apply(str)
-
-    valid_mask = is_valid(items)
-
-    return s[valid_mask].str.slice(start=9, stop=10).map(gender_digit)
+    gender_s = (items.where(is_valid(items))
+                .str.slice(start=9, stop=10)
+                .map(gender_digit))
+    return gender_s
 
 
 def birth_date(items):
@@ -68,23 +68,16 @@ def birth_date(items):
         22: -60
     }
 
-    if items.dtype != 'O':
-        s = s.apply(str)
+    birth_s = (items.where(is_valid(items))
+               .str.extract(pat=r'^(\d\d)(\d\d)(\d\d)', expand=True)
+               .rename(columns={0: 'year', 1: 'month', 2: 'day'})
+               .applymap(float)
+               .assign(century=lambda x: cut(x['month'],
+                                             bins=[0, 12, 32, 52, 72, 92],
+                                             labels=[19, 20, 21, 22, 18]))
+              )
 
-    new_s = s[is_valid(items)]
-    new_s = (new_s.str.extract(pat=r'^(\d\d)(\d\d)(\d\d)', expand=True))
-    new_s.columns = ['year', 'month', 'day']
-
-    new_s = new_s.assign(year=lambda x: x['year'].astype(int),
-                         month=lambda x: x['month'].astype(int),
-                         day=lambda x: x['day'].astype(int))
-    new_s = new_s.assign(century=lambda x: cut(x['month'],
-                                               bins=[0, 12, 32, 52, 72, 92],
-                                               labels=[19, 20, 21, 22, 18]))
-
-    # TODO: dokonczyc...
-
-    return new_s
+    return birth_s
 
 
 def age(s, ex_date):
