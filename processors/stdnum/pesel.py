@@ -2,26 +2,27 @@
 """Extract information from Polish ID Number: PESEL."""
 
 import datetime
-from pandas import cut, to_datetime
-from numpy import nan as NaN
+import numpy as np
+import pandas as pd
 from dateutil.relativedelta import relativedelta
 
-# ===
-# Regex pattern of correct pesel number
-PESEL_REGEX = r'^(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)$'
-# Birth date correction agianst century
+from processors.dateutils import datediff
 
 
 def unify(items):
     """Unifi format of pesel number."""
     if items.dtype != 'O':
-        items = items.apply(str)
-    return items.str.strip()
+        vitems = items.apply(str)
+
+    vitems = items.str.strip()
+    return vitems
 
 
 def is_valid(items):
     """"Bool mask with True if pesel id is valid."""
-    digit_df = (items.str.extract(PESEL_REGEX, expand=True)
+    pesel_regex = r'^(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)$'
+
+    digit_df = (items.str.extract(pesel_regex, expand=True)
                 .applymap(float)  # float because of posible NaN's
                )
 
@@ -59,27 +60,33 @@ def gender(items):
 
 def birth_date(items):
     """Extract birth date from pesel."""
-
-    century_factors = {
-        18: -80,
-        19: 0,
-        20: -20,
-        21: -40,
-        22: -60
+    mth_century_substract = {
+        '18': 80,
+        '19': 0,
+        '20': 20,
+        '21': 40,
+        '22': 60
     }
 
-    birth_s = (items.where(is_valid(items))
-               .str.extract(pat=r'^(\d\d)(\d\d)(\d\d)', expand=True)
-               .rename(columns={0: 'year', 1: 'month', 2: 'day'})
-               .applymap(float)
-               .assign(century=lambda x: cut(x['month'],
-                                             bins=[0, 12, 32, 52, 72, 92],
-                                             labels=[19, 20, 21, 22, 18]))
-              )
+    vitems = (items.where(is_valid(items))
+              .str.extract(pat=r'^(\d\d)(\d\d)(\d\d)', expand=True)
+              .rename(columns={0: 'year', 1: 'month', 2: 'day'})
+              .assign(month=lambda x: x['month'].apply(float))
+              .assign(century=lambda x: pd.cut(x['month'],
+                                               bins=[0, 12, 32, 52, 72, 92],
+                                               labels=['19', '20', '21', '22', '18']))
+              .assign(year=lambda x: x['century'].str.cat(x['year']))
+              .assign(month=lambda x: x['month'] - x['century'].map(mth_century_substract))
+             )
 
-    return birth_s
+    return pd.to_datetime(vitems[['year', 'month', 'day']])
 
 
-def age(s, ex_date):
-    """Get person age based on the pesel and second date."""
-    return
+def age(items, ex_date):
+    """Get person age based on the pesel and second date.
+
+    Simillary to other date related funcs you can pass str, datetime
+    or series.
+    """
+    raise NotImplementedError()
+    # return datediff(d1=ex_date, d2=birth_date(items), interval='y')

@@ -43,7 +43,7 @@ class PeselTestCase(unittest.TestCase):
         pdtest.assert_series_equal(tested, self.pesel_df['gender'],
                                    check_names=False)
 
-    def test_pesel_birth(self):
+    def test_pesel_birth_date(self):
         tested = pesel.birth_date(self.pesel_df['pesel'])
         pdtest.assert_series_equal(tested, self.pesel_df['birth_date'],
                                    check_names=False)

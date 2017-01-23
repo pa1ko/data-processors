@@ -6,10 +6,10 @@ python:
   - 3.6
 notifications:
   email: false
-# branches:
-#   only:
-#     - master
-#     - test
+branches:
+  only:
+    - master
+    - test
 
 # Setup anaconda
 before_install:
