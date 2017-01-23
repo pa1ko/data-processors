@@ -23,8 +23,9 @@ before_install:
   - sudo ln -s /run/shm /dev/shm
 # Install packages
 install:
-  - conda install --yes --name travisenv python=$TRAVIS_PYTHON_VERSION numpy pandas
+  - conda create --yes --name travisenv python python=$TRAVIS_PYTHON_VERSION
   - . activate travisenv
+  - conda install --yes numpy pandas
   - pip install pytest
   - python setup.py install
 
