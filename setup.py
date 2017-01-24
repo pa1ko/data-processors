@@ -12,7 +12,7 @@ setup(
     description='Data processing library based on pandas and numpy.',
     long_description='Data processing library based on pandas and numpy.',
 
-    url='https://github.com/pa1ko/data-processors',
+    url='https://github.com/pkonarzewski/data-processors',
 
     author='Patryk Konarzewski',
     author_email='pa.ko@wp.pl',
