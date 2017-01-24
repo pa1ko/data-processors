@@ -5,7 +5,7 @@ from numpy import nan as NaN
 import pandas.util.testing as pdtest
 from datetime import datetime
 
-import processors.stdnum.pesel as pesel
+from processors.stdnum import pesel
 
 
 class PeselTestCase(unittest.TestCase):
@@ -48,12 +48,7 @@ class PeselTestCase(unittest.TestCase):
         pdtest.assert_series_equal(tested, self.pesel_df['birth_date'],
                                    check_names=False)
 
-    def test_pesel_age_full_years(self):
-        tested = pesel.age(self.pesel_df['pesel'])
-        pdtest.assert_series_equal(tested, self.pesel_df['birth_date'],
-                                   check_names=False)
-
-    def test_pesel_age_day(self):
-        tested = pesel.age(self.pesel_df['pesel'])
-        pdtest.assert_series_equal(tested, self.pesel_df['birth_date'],
+    def test_pesel_age(self):
+        tested = pesel.age(self.pesel_df['pesel'], '2016-12-31')
+        pdtest.assert_series_equal(tested, pd.Series([NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN]),
                                    check_names=False)

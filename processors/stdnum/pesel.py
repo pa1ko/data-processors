@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from dateutil.relativedelta import relativedelta
 
-from processors.dateutils import datediff
+from processors import dateutils
 
 
 def unify(items):
@@ -45,7 +45,7 @@ def gender(items):
     """Extract gender from pesel.
 
     Decode 10th number of pesel to return gender:
-    on even women odd on men TODO: description
+    on even women odd on men.
     """
     gender_digit = dict(
         zip([str(x) for x in range(10)],
@@ -86,7 +86,8 @@ def age(items, ex_date):
     """Get person age based on the pesel and second date.
 
     Simillary to other date related funcs you can pass str, datetime
-    or series.
+    or series. Pandas will automaticly brodcast scalars.
     """
-    raise NotImplementedError()
-    # return datediff(d1=ex_date, d2=birth_date(items), interval='y')
+    return dateutils.datediff(date1=dateutils.unify(ex_date),
+                              date2=birth_date(items),
+                              interval='Y')
