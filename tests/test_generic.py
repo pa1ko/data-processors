@@ -27,3 +27,12 @@ class TestBroadcast(unittest.TestCase):
     def test_broadcast_incorect_shape(self):
         with self.assertRaises(ValueError):
             generic.broadcast_to(self.s3, self.s1)
+
+
+class TestAlignLen(self):
+
+    def test_align(self):
+        raise
+
+    def test_invalid_align(self):
+        raise
