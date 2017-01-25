@@ -50,5 +50,5 @@ class PeselTestCase(unittest.TestCase):
 
     def test_pesel_age(self):
         tested = pesel.age(self.pesel_df['pesel'], '2016-12-31')
-        pdtest.assert_series_equal(tested, pd.Series([NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN]),
+        pdtest.assert_series_equal(tested, pd.Series([72., 46., 15., 117., NaN, NaN, NaN, NaN]),
                                    check_names=False)

@@ -96,10 +96,10 @@ class TestDatediff(unittest.TestCase):
                                    self.df['diff_y'],
                                    check_names=False)
 
-    def test_brodcast(self):
+    def test_brodcast_date(self):
         dates_s = Series([datetime(2000, 1, 1), datetime(2001, 1, 1), datetime(2001, 2, 1)])
 
         pdtest.assert_series_equal(
             dtu.datediff(date1='2001-01-01', date2=dates_s, interval='D'),
-            Series([366., 0., -31.]),
+            Series([366, 0, -31]),
             check_names=False)

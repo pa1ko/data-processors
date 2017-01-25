@@ -3,7 +3,7 @@
 from datetime import datetime
 import pandas as pd
 
-from processors.generic import align_len
+from processors.generic import align_series
 
 def unify(date):
     """Ensure that data will be return in unifed format.
@@ -31,7 +31,7 @@ def datediff(date1, date2, interval):
     date2 = unify(date2)
 
     if len(date1) != len(date2):
-        date1, date2 = align_len(date1, date2)
+        date1, date2 = align_series(date1, date2)
 
     if interval == 'D':
         return (date1 - date2).dt.days
