@@ -34,7 +34,7 @@ setup(
 
     # $ pip install -e .[dev,doc]
     extras_require={
-        'dev': ['pytest', 'pylint', 'mypy-lang', 'pydocstyle', 'ipython'],
+        'dev': ['pytest', 'pytest-cov', 'pylint', 'mypy-lang', 'pydocstyle', 'ipython'],
         'doc': ['sphinx', 'sphinx-autobuild']
     },
 
