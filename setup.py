@@ -12,7 +12,7 @@ setup(
     description='Data processing library based on pandas and numpy.',
     long_description='Data processing library based on pandas and numpy.',
 
-    url='https://github.com/pa1ko/data-processors',
+    url='https://github.com/pkonarzewski/data-processors',
 
     author='Patryk Konarzewski',
     author_email='pa.ko@wp.pl',
@@ -23,18 +23,19 @@ setup(
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
+        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.5'
     ],
 
     keywords='data analysis',
     packages=find_packages(exclude=['tests']),
-    install_requires=['numpy', 'pandas'],
+    install_requires=['numpy>=1.7', 'pandas>=0.19'],
 
-    # $ pip install -e .[dev]
+    # $ pip install -e .[dev,doc]
     extras_require={
-        'dev': ['pylint', 'pep8', 'flake8', 'ipython'],
+        'dev': ['pytest', 'pylint', 'mypy-lang', 'pydocstyle', 'ipython'],
+        'doc': ['sphinx', 'sphinx-autobuild']
     },
 
 )
