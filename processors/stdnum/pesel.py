@@ -12,10 +12,9 @@ from processors import dateutils
 def unify(items):
     """Unifi format of pesel number."""
     if items.dtype != 'O':
-        vitems = items.apply(str)
+        items = items.apply(str)
 
-    vitems = items.str.strip()
-    return vitems
+    return items.str.strip()
 
 
 def is_valid(items):

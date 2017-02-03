@@ -58,3 +58,11 @@ class PeselTestCase(unittest.TestCase):
         tested = pesel.age(self.pesel_df['pesel'], '2016-12-31')
         pdtest.assert_series_equal(tested, pd.Series([72., 46., 15., 117., NaN, NaN, NaN, NaN]),
                                    check_names=False)
+
+    def test_numeric_pesel(self):
+        tested = pd.Series([44112607890], dtype='int64')
+        pdtest.assert_series_equal(pesel.unify(tested),
+                                   pd.Series(['44112607890']),
+                                   check_names=False)
+
+        assert tested.dtype == 'int64', 'Series type changed to: {}'.format(tested.dtype)
