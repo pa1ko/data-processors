@@ -1,11 +1,8 @@
 # -- coding: utf-8 -*-
 """Extract information from Polish ID Number: PESEL."""
-
-import datetime
-import numpy as np
 import pandas as pd
-from dateutil.relativedelta import relativedelta
 
+from processors import generic
 from processors import dateutils
 
 
@@ -21,21 +18,20 @@ def is_valid(items):
     """"Bool mask with True if pesel is valid."""
     pesel_regex = r'^(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)$'
 
-    digit_df = (items.str.extract(pesel_regex, expand=True)
-                .applymap(float)  # float because of posible NaN's
-               )
+    digit_df = generic.split_numbers_to_columns(items, pesel_regex)
 
-    controlsum = (9 * digit_df.iloc[:, 0].values +
-                  7 * digit_df.iloc[:, 1].values +
-                  3 * digit_df.iloc[:, 2].values +
-                  1 * digit_df.iloc[:, 3].values +
-                  9 * digit_df.iloc[:, 4].values +
-                  7 * digit_df.iloc[:, 5].values +
-                  3 * digit_df.iloc[:, 6].values +
-                  1 * digit_df.iloc[:, 7].values +
-                  9 * digit_df.iloc[:, 8].values +
-                  7 * digit_df.iloc[:, 9].values
-                 ) % 10
+    controlsum = (
+        9 * digit_df.iloc[:, 0].values +
+        7 * digit_df.iloc[:, 1].values +
+        3 * digit_df.iloc[:, 2].values +
+        1 * digit_df.iloc[:, 3].values +
+        9 * digit_df.iloc[:, 4].values +
+        7 * digit_df.iloc[:, 5].values +
+        3 * digit_df.iloc[:, 6].values +
+        1 * digit_df.iloc[:, 7].values +
+        9 * digit_df.iloc[:, 8].values +
+        7 * digit_df.iloc[:, 9].values
+    ) % 10
 
     return digit_df.iloc[:, 10] == controlsum
 
