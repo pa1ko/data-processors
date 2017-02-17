@@ -1,4 +1,7 @@
 # data-processors
+=======
+[![Build Status](https://travis-ci.org/pkonarzewski/data-processors.svg?branch=master)](https://travis-ci.org/pkonarzewski/data-processors)
+
 Data processing library based on pandas and numpy. It's goal is to be
 collection of useful functions to process pandas series with efficient
 and easy to use.
