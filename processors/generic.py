@@ -3,6 +3,7 @@
 import pandas as pd
 
 
+# Broadcast
 def broadcast_to(series, to):
     """Align series to shape of other, similiar to numpy broadcast.
 
@@ -31,3 +32,13 @@ def align_series(series1, series2):
         return broadcast_to(series1, series2), series2
     else:
         return series1, series2
+
+
+# Checksum
+def split_numbers_to_columns(series, pattern):
+    """Split given series to columns with given regex.
+
+    Each columns will be following numbers in series.
+    """
+    return (series.str.extract(pattern, expand=True)
+            .applymap(float))  # float because of posible NaN's

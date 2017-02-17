@@ -1,6 +1,7 @@
 # -- coding: utf-8 -*-
 import unittest
-from pandas import Series
+from pandas import Series, DataFrame
+from numpy import NaN
 import pandas.util.testing as pdtest
 
 from processors import generic
@@ -58,3 +59,19 @@ class TestAlignSeries(unittest.TestCase):
     def test_invalid_align(self):
         with self.assertRaises(ValueError):
             generic.align_series(self.s3, self.s4)
+
+
+class TestSplitNumbersFunc(unittest.TestCase):
+
+    def test_split_correct(self):
+        tested = Series(['123', '456', '789', '12', '1234'])
+        result = DataFrame([(1., 2., 3.),
+                            (4., 5., 6.),
+                            (7., 8., 9.),
+                            (NaN, NaN, NaN),
+                            (NaN, NaN, NaN)], columns=[0, 1, 2])
+
+        pdtest.assert_frame_equal(
+            generic.split_numbers_to_columns(tested, r'^(\d)(\d)(\d)$'),
+            result
+        )
