@@ -27,7 +27,11 @@ install:
   - . activate travisenv
   - conda install --yes numpy pandas
   - pip install pytest
+  - pip install pytest-cov
+  - pip install codecov
   - python setup.py install
-
 # Run test
-script: pytest
+script:
+  - pytest --cov-config .coveragerc --cov=processors tests/
+after_success:
+  - codecov
