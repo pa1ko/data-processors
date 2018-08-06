@@ -25,7 +25,10 @@ class PeselTestCase(unittest.TestCase):
              # wrong checksum
              ('70102108691', NaN, pd.NaT, False, NaN),
              ('10102108696', NaN, pd.NaT, False, NaN),
-             ('123', NaN, pd.NaT, False, NaN)],
+             ('123', NaN, pd.NaT, False, NaN),
+             # invalid number on 7th position
+             ('', NaN, pd.NaT, False, NaN),
+            ],
             columns=['pesel', 'gender', 'birth_date', 'valid', 'age20161231']
         )
 

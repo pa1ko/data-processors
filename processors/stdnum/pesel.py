@@ -1,5 +1,7 @@
 # -- coding: utf-8 -*-
 """Extract information from Polish ID Number: PESEL."""
+from random import randint
+from datetime import date, timedelta
 import pandas as pd
 
 from processors import generic
@@ -33,7 +35,7 @@ def is_valid(items):
         7 * digit_df.iloc[:, 9].values
     ) % 10
 
-    return digit_df.iloc[:, 10] == controlsum
+    return (digit_df.iloc[:, 10] == controlsum | digit_df.iloc[:, 6] <= 2)
 
 
 def gender(items, gender_sym=None):
@@ -91,3 +93,32 @@ def age(items, ex_date):
     return dateutils.datediff(date1=dateutils.unify(ex_date),
                               date2=birth_date(items),
                               interval='Y')
+
+
+def generate(nrows=5, age=None, sex=None):
+    """"sex:  'm', 'f'
+        age: 25 or '1954-12-01'
+
+    Only for 1900 to 2100
+    """
+
+    weights = [9,7,3,1,9,7,3,1,9,7]
+
+    sdate = date(1900, 1, 1)
+    day_span = (date.today() - sdate)
+    rand_date = sdate + timedelta(days=randint(1, day_span.days))
+
+    yy = str(rand_date.year)[2:].zfill(2)
+    mm = str(rand_date.month).zfill(2) if rand_date.year < 2000 else str(rand_date.month+20).zfill(2)
+    dd = str(rand_date.day).zfill(2)
+    rnd = str(round(randint(1,99))).zfill(2)
+    sex = round(randint(0,9))
+
+    pesel10 = f'{yy}{mm}{dd}1{rnd}{sex}'
+
+    c_weight = map(lambda x: x[0]*x[1],
+        zip(weights, [int(x) for x in pesel10]))
+
+    control = str(sum(c_weight) % 10)
+
+    return pesel10 + control
