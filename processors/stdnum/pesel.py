@@ -1,5 +1,6 @@
 # -- coding: utf-8 -*-
 """Extract information from Polish ID Number: PESEL."""
+
 from random import randint
 from datetime import date, timedelta
 import pandas as pd
@@ -10,6 +11,7 @@ from processors import dateutils
 
 def unify(items):
     """Unifi format of pesel number."""
+
     if items.dtype != 'O':
         items = items.apply(str)
 
@@ -18,6 +20,7 @@ def unify(items):
 
 def is_valid(items):
     """"Bool mask with True if pesel is valid."""
+
     pesel_regex = r'^(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)(\d)$'
 
     digit_df = generic.split_numbers_to_columns(items, pesel_regex)
@@ -46,6 +49,7 @@ def gender(items, gender_sym=None):
     gender_sym: tuple ('Female symbol', 'Male symbol'), if None will return
      1 = Female, 2 = Male.
     """
+
     if gender_sym is None:
         gender_sym = (1, 2)
 
@@ -62,6 +66,7 @@ def gender(items, gender_sym=None):
 
 def birth_date(items):
     """Extract birth date from pesel."""
+
     mth_century_substract = {
         '18': 80,
         '19': 0,
@@ -90,29 +95,36 @@ def age(items, ex_date):
     Simillary to other date related funcs you can pass str, datetime
     or series. Function will try to broadcast scalars.
     """
+
     return dateutils.datediff(date1=dateutils.unify(ex_date),
                               date2=birth_date(items),
                               interval='Y')
 
 
-def generate(nrows=5, age=None, sex=None):
+def generate_one(age=None, sex=None):
     """"sex:  'm', 'f'
         age: 25 or '1954-12-01'
 
     Only for 1900 to 2100
     """
 
-    weights = [9,7,3,1,9,7,3,1,9,7]
+    weights = [9, 7, 3, 1, 9, 7, 3, 1, 9, 7]
 
     sdate = date(1900, 1, 1)
     day_span = (date.today() - sdate)
-    rand_date = sdate + timedelta(days=randint(1, day_span.days))
 
-    yy = str(rand_date.year)[2:].zfill(2)
-    mm = str(rand_date.month).zfill(2) if rand_date.year < 2000 else str(rand_date.month+20).zfill(2)
-    dd = str(rand_date.day).zfill(2)
+    elif isinstance(age, str):
+        pesel_date = date(age)
+    elif isinstance(age, date) or isinstance(age, datetime):
+        pesel_date =
+    else
+        pesel_date = sdate + timedelta(days=randint(1, day_span.days))
+
+    yy = str(pesel_date.year)[2:].zfill(2)
+    mm = str(pesel_date.month).zfill(2) if pesel_date.year < 2000 else str(pesel_date.month+20).zfill(2)
+    dd = str(pesel_date.day).zfill(2)
     rnd = str(round(randint(1,99))).zfill(2)
-    sex = round(randint(0,9))
+    sex = if sex == 'm' choice([1,3,5,7,9]) else choice([0,2,4,6,8])
 
     pesel10 = f'{yy}{mm}{dd}1{rnd}{sex}'
 
@@ -122,3 +134,9 @@ def generate(nrows=5, age=None, sex=None):
     control = str(sum(c_weight) % 10)
 
     return pesel10 + control
+
+
+def generate(nrows=5, age=None, sex=None):
+    """Generate rows of pesels."""
+
+    return pd.Series([generate_one(age=age, sex=sex) for _ in range(nrows)])

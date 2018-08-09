@@ -75,3 +75,11 @@ class PeselTestCase(unittest.TestCase):
                                    check_names=False)
 
         assert tested.dtype == 'int64', 'Series type changed to: {}'.format(tested.dtype)
+
+    def test_generate_one_pesel(self):
+
+        assert len(pesel.generate_one()) == 10
+        assert len(pesel.generate_one(age=50)) == 10
+        assert len(pesel.generate_one(sex='f')) == 10
+        assert len(pesel.generate_one(sex='m')) == 10
+        assert len(pesel.generate_one(age=10, sex='m')) == 10
